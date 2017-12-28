@@ -5,6 +5,7 @@ INCLUDE(${LIBFTDI_USE_FILE})
 SET(JTAGPP_HEADERS
     ../include/jtagpp/FTDIInterface.hpp
     ../include/jtagpp/JTAGInterface.hpp
+    ../include/jtagpp/TAPController.hpp
     ../include/jtagpp/jtagpp.hpp
     ../include/jtagpp/Log.hpp
     ../include/jtagpp/spimpl.hpp
@@ -13,11 +14,13 @@ SET(JTAGPP_HEADERS
 SET(JTAGPP_PRIVATE_HEADERS
     ../include/jtagpp/private/FTDIInterface_p.hpp
     ../include/jtagpp/private/JTAGInterface_p.hpp
+    ../include/jtagpp/private/TAPController_p.hpp
 )
 
 SET(JTAGPP_SOURCES 
     FTDIInterface.cpp
     JTAGInterface.cpp
+    TAPController.cpp
     Log.cpp
 )
 
