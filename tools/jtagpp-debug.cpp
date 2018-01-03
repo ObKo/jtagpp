@@ -13,7 +13,7 @@ int main()
         stream << "[" << e.module << "] " << e.text << std::endl;
     });
 
-    JTAGInterfacePtr iface = FTDIInterface::create(std::string("0x0403:0x6014:Digilent USB Device:0:0xe8:0xeb:0x00:0x60"));
+    JTAGInterfacePtr iface = FTDIInterface::create(std::string("0x0403:0x6010:Digilent USB Device:0:0xe8:0xeb:0x00:0x60"));
 
     iface->setFrequency(3000000);
     iface->open();
