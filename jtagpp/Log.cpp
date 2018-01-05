@@ -100,80 +100,9 @@ Log::Logger::~Logger()
     Log::instance().writeLog(LogEntry(d->level, d->module, d->stream.str()));
 }
 
-Log::Logger& Log::Logger::operator <<(LogEntry::Level l)
+std::ostream& Log::Logger::stream()
 {
     JTAGPP_D(Logger);
-    d->level = l;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator <<(int v)
-{
-    JTAGPP_D(Logger);
-    d->stream << v;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator <<(long v)
-{
-    JTAGPP_D(Logger);
-    d->stream << v;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator <<(long long v)
-{
-    JTAGPP_D(Logger);
-    d->stream << v;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator <<(unsigned int v)
-{
-    JTAGPP_D(Logger);
-    d->stream << v;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator <<(unsigned long v)
-{
-    JTAGPP_D(Logger);
-    d->stream << v;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator <<(unsigned long long v)
-{
-    JTAGPP_D(Logger);
-    d->stream << v;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator <<(float v)
-{
-    JTAGPP_D(Logger);
-    d->stream << v;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator <<(bool v)
-{
-    JTAGPP_D(Logger);
-    d->stream << v;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator <<(const std::string& v)
-{
-    JTAGPP_D(Logger);
-    d->stream << v;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator <<(const char *v)
-{
-    JTAGPP_D(Logger);
-    d->stream << v;
-    return *this;
+    return d->stream;
 }
 }

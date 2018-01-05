@@ -2,6 +2,7 @@ SET(JTAGPP_HEADERS
     ../include/jtagpp/FTDIInterface.hpp
     ../include/jtagpp/JTAGInterface.hpp
     ../include/jtagpp/TAPController.hpp
+    ../include/jtagpp/DeviceDB.hpp
     ../include/jtagpp/jtagpp.hpp
     ../include/jtagpp/Log.hpp
     ../include/jtagpp/spimpl.hpp
@@ -17,6 +18,7 @@ SET(JTAGPP_SOURCES
     FTDIInterface.cpp
     JTAGInterface.cpp
     TAPController.cpp
+    JEP106.cpp
     Log.cpp
 )
 

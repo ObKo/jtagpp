@@ -4,6 +4,7 @@ PROJECT(jtagpp)
 
 OPTION(STANDALONE_BUILD "Use pre-built libftdi and libusb")
 OPTION(STATIC_BUILD "Create static library (and use static libftdi and libusb in case of standalone build)")
+OPTION(NO_VENDOR_DATABASE "Do not build in JEDEC JEP106 vendor database")
 
 IF(STANDALONE_BUILD)
     SET(LibFTDI1_DIR ${CMAKE_SOURCE_DIR}/3rdparty/cmake)
@@ -16,6 +17,10 @@ IF(STATIC_BUILD)
     SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 ELSE()
     SET(BUILD_SHARED_LIBS ON)
+ENDIF()
+
+IF(NO_VENDOR_DATABASE)
+    ADD_DEFINITIONS(-DNO_VENDOR_DATABASE)
 ENDIF()
 
 FIND_PACKAGE(LibFTDI1 NO_MODULE REQUIRED)

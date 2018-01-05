@@ -4,6 +4,7 @@
 #include <jtagpp/jtagpp.hpp>
 #include <chrono>
 #include <functional>
+#include <iostream>
 
 namespace jtagpp
 {
@@ -53,18 +54,16 @@ public:
     Logger(Logger&& other);
     ~Logger();
 
+    std::ostream& stream();
+
     Logger& operator <<(LogEntry::Level l);
 
-    Logger& operator <<(int v);
-    Logger& operator <<(long v);
-    Logger& operator <<(long long v);
-    Logger& operator <<(unsigned int v);
-    Logger& operator <<(unsigned long v);
-    Logger& operator <<(unsigned long long v);
-    Logger& operator <<(float v);
-    Logger& operator <<(bool v);
-    Logger& operator <<(const std::string& v);
-    Logger& operator <<(const char *v);
+    template <class D>
+    Logger& operator <<(D v)
+    {
+        stream() << v;
+        return *this;
+    }
 };
 }
 
