@@ -27,9 +27,9 @@ class Log
 {
     JTAGPP_BASE_CLASS_NOCOPY(Log)
 
+public:
     class Logger;
 
-public:
     typedef std::function<void(const LogEntry&)> LogHandler;
     static Log& instance();
 
