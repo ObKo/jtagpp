@@ -27,12 +27,12 @@ namespace {
 }
 
 FTDIInterface::FTDIInterface(const std::string& config):
-    JTAGInterface(config, spimpl::unique_impl_ptr<JTAGInterfacePrivate>(new FTDIInterfacePrivate(), &spimpl::details::default_delete<JTAGInterfacePrivate>))
+    Interface(config, spimpl::unique_impl_ptr<InterfacePrivate>(new FTDIInterfacePrivate(), &spimpl::details::default_delete<InterfacePrivate>))
 {
 }
 
-FTDIInterface::FTDIInterface(const std::string& config, spimpl::unique_impl_ptr<JTAGInterfacePrivate>&& p):
-    JTAGInterface(config, std::forward<spimpl::unique_impl_ptr<JTAGInterfacePrivate>>(p))
+FTDIInterface::FTDIInterface(const std::string& config, spimpl::unique_impl_ptr<InterfacePrivate>&& p):
+    Interface(config, std::forward<spimpl::unique_impl_ptr<InterfacePrivate>>(p))
 {
 }
 
@@ -40,9 +40,9 @@ FTDIInterface::~FTDIInterface()
 {
 }
 
-JTAGInterfacePtr FTDIInterface::create(const std::string& config)
+InterfacePtr FTDIInterface::create(const std::string& config)
 {
-    return JTAGInterfacePtr(new FTDIInterface(config));
+    return InterfacePtr(new FTDIInterface(config));
 }
 
 bool FTDIInterface::open()
@@ -63,7 +63,7 @@ void FTDIInterface::close()
     return d->close();
 }
 
-FTDIInterface::FTDIInterfacePrivate::FTDIInterfacePrivate(): JTAGInterfacePrivate(),
+FTDIInterface::FTDIInterfacePrivate::FTDIInterfacePrivate(): InterfacePrivate(),
     mpssePos(0)
 {
 }

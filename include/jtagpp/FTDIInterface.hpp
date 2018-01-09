@@ -1,18 +1,18 @@
 #ifndef JTAGPP_FTDIINTERFACE_H
 #define JTAGPP_FTDIINTERFACE_H
 
-#include <jtagpp/JTAGInterface.hpp>
+#include <jtagpp/Interface.hpp>
 
 namespace jtagpp
 {
-class FTDIInterface: public JTAGInterface
+class FTDIInterface: public Interface
 {
     JTAGPP_CLASS_NOCOPY(FTDIInterface)
 
 public:
     virtual ~FTDIInterface();
 
-    static JTAGInterfacePtr create(const std::string& config);
+    static InterfacePtr create(const std::string& config);
 
     virtual bool open();
     virtual bool isOpen() const;
@@ -25,7 +25,7 @@ public:
 
 protected:
     FTDIInterface(const std::string& config);
-    FTDIInterface(const std::string& config, spimpl::unique_impl_ptr<JTAGInterfacePrivate>&& p);
+    FTDIInterface(const std::string& config, spimpl::unique_impl_ptr<InterfacePrivate>&& p);
 };
 }
 

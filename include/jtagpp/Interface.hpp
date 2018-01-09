@@ -1,5 +1,5 @@
-#ifndef JTAGPP_JTAGINTERFACE_H
-#define JTAGPP_JTAGINTERFACE_H
+#ifndef JTAGPP_INTERFACE_H
+#define JTAGPP_INTERFACE_H
 
 #include <jtagpp/jtagpp.hpp>
 
@@ -8,18 +8,18 @@
 
 namespace jtagpp
 {
-class JTAGInterface;
+class Interface;
 
-typedef std::shared_ptr<JTAGInterface> JTAGInterfacePtr;
+typedef std::shared_ptr<Interface> InterfacePtr;
 
-class JTAGInterface: public std::enable_shared_from_this<JTAGInterface>
+class Interface: public std::enable_shared_from_this<Interface>
 {
-    JTAGPP_BASE_CLASS_NOCOPY(JTAGInterface)
+    JTAGPP_BASE_CLASS_NOCOPY(Interface)
 
 public:
-    virtual ~JTAGInterface();
+    virtual ~Interface();
 
-    JTAGInterfacePtr pointer();
+    InterfacePtr pointer();
 
     void setFrequency(int hz);
 
@@ -38,9 +38,9 @@ public:
     virtual void flush() = 0;
 
 protected:
-    JTAGInterface(const std::string& config);
-    JTAGInterface(const std::string& config, spimpl::unique_impl_ptr<JTAGInterfacePrivate>&& p);
+    Interface(const std::string& config);
+    Interface(const std::string& config, spimpl::unique_impl_ptr<InterfacePrivate>&& p);
 };
 }
 
-#endif // JTAGPP_JTAGINTERFACE_H
+#endif // JTAGPP_INTERFACE_H

@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     if (argc > 1)
         config = argv[1];
 
-    JTAGInterfacePtr iface = FTDIInterface::create(config);
+    InterfacePtr iface = FTDIInterface::create(config);
 
     iface->setFrequency(3000000);
     iface->open();

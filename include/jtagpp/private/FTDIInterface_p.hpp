@@ -1,7 +1,7 @@
 #ifndef JTAGPP_FTDIINTERFACE_P_H
 #define JTAGPP_FTDIINTERFACE_P_H
 
-#include "JTAGInterface_p.hpp"
+#include "Interface_p.hpp"
 
 #include <jtagpp/FTDIInterface.hpp>
 
@@ -15,7 +15,7 @@ namespace {
     static const int TX_CHUNK_SIZE = 512;
 }
 
-class FTDIInterface::FTDIInterfacePrivate: public JTAGInterface::JTAGInterfacePrivate
+class FTDIInterface::FTDIInterfacePrivate: public Interface::InterfacePrivate
 {
 public:
     FTDIInterfacePrivate();

@@ -13,7 +13,7 @@ public:
     Chain *q;
 
     std::shared_ptr<TAPController> tap;
-    std::shared_ptr<JTAGInterface> interface;
+    std::shared_ptr<Interface> interface;
 
     std::vector<std::shared_ptr<Device>> devices;
     int currentDevice;

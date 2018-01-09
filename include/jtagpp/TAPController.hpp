@@ -8,7 +8,7 @@
 
 namespace jtagpp
 {
-class JTAGInterface;
+class Interface;
 class TAPController;
 
 typedef std::shared_ptr<TAPController> TAPControllerPtr;
@@ -25,7 +25,7 @@ public:
 
     virtual ~TAPController();
 
-    static TAPControllerPtr create(std::shared_ptr<JTAGInterface> interface);
+    static TAPControllerPtr create(std::shared_ptr<Interface> interface);
 
     TAPControllerPtr pointer();
     
@@ -36,8 +36,8 @@ public:
     void shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool last);
 
 protected:
-    TAPController(std::shared_ptr<JTAGInterface> interface);
-    TAPController(std::shared_ptr<JTAGInterface> interface, spimpl::unique_impl_ptr<TAPControllerPrivate>&& p);
+    TAPController(std::shared_ptr<Interface> interface);
+    TAPController(std::shared_ptr<Interface> interface, spimpl::unique_impl_ptr<TAPControllerPrivate>&& p);
 };
 }
 

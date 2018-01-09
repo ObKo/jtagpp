@@ -4,7 +4,7 @@
 #include "jtagpp/Log.hpp"
 #include "jtagpp/TAPController.hpp"
 #include "jtagpp/Device.hpp"
-#include "jtagpp/JTAGInterface.hpp"
+#include "jtagpp/Interface.hpp"
 
 #include <algorithm>
 #include <cstring>
@@ -16,7 +16,7 @@ namespace {
     static const int DEFAULT_IR_WIDTH = 6;
 }
 
-Chain::Chain(std::shared_ptr<JTAGInterface> iface):
+Chain::Chain(std::shared_ptr<Interface> iface):
     _d(spimpl::make_unique_impl<ChainPrivate>())
 {
     JTAGPP_D(Chain);
@@ -26,7 +26,7 @@ Chain::Chain(std::shared_ptr<JTAGInterface> iface):
     d->currentDevice = -1;
 }
 
-Chain::Chain(std::shared_ptr<JTAGInterface> iface, spimpl::unique_impl_ptr<ChainPrivate>&& p):
+Chain::Chain(std::shared_ptr<Interface> iface, spimpl::unique_impl_ptr<ChainPrivate>&& p):
     _d(std::forward<spimpl::unique_impl_ptr<ChainPrivate>>(p))
 {
     JTAGPP_D(Chain);
@@ -49,7 +49,7 @@ ChainPtr Chain::pointer()
     return shared_from_this();
 }
 
-ChainPtr Chain::create(std::shared_ptr<JTAGInterface> iface)
+ChainPtr Chain::create(std::shared_ptr<Interface> iface)
 {
     return std::shared_ptr<Chain>(new Chain(iface));
 }
@@ -296,6 +296,12 @@ void Chain::shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first, 
 
     if (postBypassLength)
         d->tap->shiftDR(pre, nullptr, postBypassLength, last);
+}
+
+void Chain::reset()
+{
+    JTAGPP_D(Chain);
+    d->initChain();
 }
 
 void Chain::ChainPrivate::initChain()

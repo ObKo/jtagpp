@@ -1,14 +1,14 @@
 #include "jtagpp/TAPController.hpp"
 #include "jtagpp/private/TAPController_p.hpp"
 
-#include "jtagpp/JTAGInterface.hpp"
+#include "jtagpp/Interface.hpp"
 #include "jtagpp/Log.hpp"
 
 #include <cstring>
 
 namespace jtagpp
 {
-TAPController::TAPController(std::shared_ptr<JTAGInterface> interface):
+TAPController::TAPController(std::shared_ptr<Interface> interface):
     _d(spimpl::make_unique_impl<TAPControllerPrivate>())
 {
     JTAGPP_D(TAPController);
@@ -16,7 +16,7 @@ TAPController::TAPController(std::shared_ptr<JTAGInterface> interface):
     d->interface = interface;
 }
 
-TAPController::TAPController(std::shared_ptr<JTAGInterface> interface, spimpl::unique_impl_ptr<TAPControllerPrivate>&& p):
+TAPController::TAPController(std::shared_ptr<Interface> interface, spimpl::unique_impl_ptr<TAPControllerPrivate>&& p):
     _d(std::forward<spimpl::unique_impl_ptr<TAPControllerPrivate>>(p))
 {
     JTAGPP_D(TAPController);
@@ -32,7 +32,7 @@ TAPController::TAPControllerPrivate::~TAPControllerPrivate()
 {
 }
 
-TAPControllerPtr TAPController::create(std::shared_ptr<JTAGInterface> interface)
+TAPControllerPtr TAPController::create(std::shared_ptr<Interface> interface)
 {
     return TAPControllerPtr(new TAPController(interface));
 }

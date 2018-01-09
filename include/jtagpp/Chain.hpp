@@ -9,7 +9,7 @@
 
 namespace jtagpp
 {
-class JTAGInterface;
+class Interface;
 class TAPController;
 class Chain;
 
@@ -22,7 +22,7 @@ class Chain: public std::enable_shared_from_this<Chain>
 public:
     virtual ~Chain();
 
-    static ChainPtr create(std::shared_ptr<JTAGInterface> iface);
+    static ChainPtr create(std::shared_ptr<Interface> iface);
 
     ChainPtr pointer();
 
@@ -38,12 +38,13 @@ public:
     DevicePtr currentDevice() const;
     void setCurrentDevice(DevicePtr device);
 
+    void reset();
     void shiftIR(const uint8_t *in, uint8_t *out);
     void shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first, bool last);
 
 protected:
-    Chain(std::shared_ptr<JTAGInterface> iface);
-    Chain(std::shared_ptr<JTAGInterface> iface, spimpl::unique_impl_ptr<ChainPrivate>&& p);
+    Chain(std::shared_ptr<Interface> iface);
+    Chain(std::shared_ptr<Interface> iface, spimpl::unique_impl_ptr<ChainPrivate>&& p);
 };
 }
 

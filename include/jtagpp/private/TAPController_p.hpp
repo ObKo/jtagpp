@@ -16,7 +16,7 @@ public:
                      uint32_t& tms, int& tmsLength);
 
     State state;
-    std::shared_ptr<JTAGInterface> interface;
+    std::shared_ptr<Interface> interface;
 };
 }
 

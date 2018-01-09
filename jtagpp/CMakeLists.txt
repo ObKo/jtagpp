@@ -1,6 +1,6 @@
 SET(JTAGPP_HEADERS
     ../include/jtagpp/FTDIInterface.hpp
-    ../include/jtagpp/JTAGInterface.hpp
+    ../include/jtagpp/Interface.hpp
     ../include/jtagpp/TAPController.hpp
     ../include/jtagpp/DeviceDB.hpp
     ../include/jtagpp/Device.hpp
@@ -12,7 +12,7 @@ SET(JTAGPP_HEADERS
 
 SET(JTAGPP_PRIVATE_HEADERS
     ../include/jtagpp/private/FTDIInterface_p.hpp
-    ../include/jtagpp/private/JTAGInterface_p.hpp
+    ../include/jtagpp/private/Interface_p.hpp
     ../include/jtagpp/private/TAPController_p.hpp
     ../include/jtagpp/private/Device_p.hpp
     ../include/jtagpp/private/Chain_p.hpp
@@ -20,7 +20,7 @@ SET(JTAGPP_PRIVATE_HEADERS
 
 SET(JTAGPP_SOURCES 
     FTDIInterface.cpp
-    JTAGInterface.cpp
+    Interface.cpp
     TAPController.cpp
     JEP106.cpp
     Log.cpp
