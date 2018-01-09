@@ -11,6 +11,7 @@ public:
     virtual ~DevicePrivate();
 
     Device::IDCode id;
+    std::weak_ptr<Chain> chain;
 };
 }
 

@@ -222,6 +222,27 @@ void TAPController::shiftIR(const uint8_t *in, uint8_t *out, int bitlength, bool
 
     if (last)
         d->state = S_EXIT1_IR;
+
+    if (in)
+    {
+        std::string dbgString(bitlength, '0');
+        for (int i = bitlength - 1; i >= 0; i--)
+        {
+            if (in[i / 8] & (1 << (i % 8)))
+                dbgString[i] = '1';
+        }
+        Log::debug("TAPController") << "IR ->: " << dbgString;
+    }
+    if (out)
+    {
+        std::string dbgString(bitlength, '0');
+        for (int i = bitlength - 1; i >= 0; i--)
+        {
+            if (out[i / 8] & (1 << (i % 8)))
+                dbgString[i] = '1';
+        }
+        Log::debug("TAPController") << "IR <-: " << dbgString;
+    }
 }
 
 void TAPController::shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool last)
@@ -233,5 +254,26 @@ void TAPController::shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool
 
     if (last)
         d->state = S_EXIT1_DR;
+
+    std::string dbgString(bitlength, '0');
+
+    if (in)
+    {
+        for (int i = bitlength - 1; i >= 0; i--)
+        {
+            if (in[i / 8] & (1 << (i % 8)))
+                dbgString[i] = '1';
+        }
+        Log::debug("TAPController") << "DR ->: " << dbgString;
+    }
+    if (out)
+    {
+        for (int i = bitlength - 1; i >= 0; i--)
+        {
+            if (out[i / 8] & (1 << (i % 8)))
+                dbgString[i] = '1';
+        }
+        Log::debug("TAPController") << "DR <-: " << dbgString;
+    }
 }
 }

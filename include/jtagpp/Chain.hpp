@@ -30,6 +30,17 @@ public:
 
     std::vector<Device::IDCode> scan();
 
+    std::vector<DevicePtr> devices() const;
+    void addDevice(DevicePtr device);
+    void removeDevice(DevicePtr device);
+    void insertDevice(int i, DevicePtr device);
+
+    DevicePtr currentDevice() const;
+    void setCurrentDevice(DevicePtr device);
+
+    void shiftIR(const uint8_t *in, uint8_t *out);
+    void shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first, bool last);
+
 protected:
     Chain(std::shared_ptr<JTAGInterface> iface);
     Chain(std::shared_ptr<JTAGInterface> iface, spimpl::unique_impl_ptr<ChainPrivate>&& p);

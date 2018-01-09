@@ -2,6 +2,7 @@
 #include "jtagpp/private/Device_p.hpp"
 
 #include "jtagpp/DeviceDB.hpp"
+#include "jtagpp/Chain.hpp"
 #include "jtagpp/Log.hpp"
 
 namespace jtagpp
@@ -64,14 +65,56 @@ uint32_t Device::IDCode::jtag() const
            ((manufacturer & 0x7FF) << 1) | 1;
 }
 
-Log::Logger& operator <<(Log::Logger& l, const Device::IDCode& code)
+std::ostream& operator <<(std::ostream& s, const Device::IDCode& code)
 {
     std::string vendor = DeviceDB::vendorName(code.manufacturer);
 
     if (vendor.empty())
         vendor = "Unknown";
 
-    l << vendor << " 0x" << std::hex << code.partNumber << " 0x" << (int)code.version << std::dec;
-    return l;
+    s << vendor << " 0x" << std::hex << code.partNumber << " 0x" << (int)code.version << std::dec;
+    return s;
+}
+
+std::shared_ptr<Chain> Device::chain() const
+{
+    JTAGPP_D(const Device);
+    return d->chain.lock();
+}
+
+void Device::setChain(std::shared_ptr<Chain> chain)
+{
+    JTAGPP_D(Device);
+    d->chain = chain;
+}
+
+void Device::shiftIR(const uint8_t *in, uint8_t *out)
+{
+    JTAGPP_D(Device);
+
+    std::shared_ptr<Chain> chain = d->chain.lock();
+
+    if (!chain)
+    {
+        Log::warning("Device") << "Cannot shift IR because device isn't assigned to any chain";
+        return;
+    }
+    chain->setCurrentDevice(pointer());
+    chain->shiftIR(in, out);
+}
+
+void Device::shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first, bool last)
+{
+    JTAGPP_D(Device);
+
+    std::shared_ptr<Chain> chain = d->chain.lock();
+
+    if (!chain)
+    {
+        Log::warning("Device") << "Cannot shift DR because device isn't assigned to any chain";
+        return;
+    }
+    chain->setCurrentDevice(pointer());
+    chain->shiftDR(in, out, bitlength, first, last);
 }
 }

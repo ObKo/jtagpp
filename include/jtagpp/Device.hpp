@@ -9,6 +9,7 @@
 namespace jtagpp
 {
 class Device;
+class Chain;
 
 typedef std::shared_ptr<Device> DevicePtr;
 
@@ -36,13 +37,19 @@ public:
     DevicePtr pointer();
 	
 	virtual int irLength() const;
+
+    std::shared_ptr<Chain> chain() const;
+    void setChain(std::shared_ptr<Chain> chain);
+
+    void shiftIR(const uint8_t *in, uint8_t *out);
+    void shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first, bool last);
     
 protected:
     Device(const IDCode& id);
     Device(const IDCode& id, spimpl::unique_impl_ptr<DevicePrivate>&& p);
 };
 
-Log::Logger& operator <<(Log::Logger& l, const Device::IDCode& code);
+std::ostream& operator <<(std::ostream& s, const Device::IDCode& code);
 }
 
 
