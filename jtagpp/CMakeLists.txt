@@ -5,6 +5,7 @@ SET(JTAGPP_HEADERS
     ../include/jtagpp/DeviceDB.hpp
     ../include/jtagpp/Device.hpp
     ../include/jtagpp/Chain.hpp
+    ../include/jtagpp/XilinxFPGADevice.hpp
     ../include/jtagpp/jtagpp.hpp
     ../include/jtagpp/Log.hpp
     ../include/jtagpp/spimpl.hpp
@@ -16,6 +17,7 @@ SET(JTAGPP_PRIVATE_HEADERS
     ../include/jtagpp/private/TAPController_p.hpp
     ../include/jtagpp/private/Device_p.hpp
     ../include/jtagpp/private/Chain_p.hpp
+    ../include/jtagpp/private/XilinxFPGADevice_p.hpp
 )
 
 SET(JTAGPP_SOURCES 
@@ -26,9 +28,10 @@ SET(JTAGPP_SOURCES
     Log.cpp
     Device.cpp
     Chain.cpp
+    XilinxFPGADevice.cpp
 )
 
-ADD_LIBRARY(jtagpp ${JTAGPP_SOURCES} ${JTAGPP_HEADERS} ${JTAGPP_PRIVATE_HEADERS})
+ADD_LIBRARY(jtagpp STATIC ${JTAGPP_SOURCES} ${JTAGPP_HEADERS} ${JTAGPP_PRIVATE_HEADERS})
 TARGET_LINK_LIBRARIES(jtagpp ${LIBFTDI_LIBRARIES})
 SET_PROPERTY(TARGET jtagpp PROPERTY CXX_STANDARD 11)
 

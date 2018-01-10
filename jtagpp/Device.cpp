@@ -117,4 +117,65 @@ void Device::shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first,
     chain->setCurrentDevice(pointer());
     chain->shiftDR(in, out, bitlength, first, last);
 }
+
+void Device::cycleMsec(int msec)
+{
+    JTAGPP_D(Device);
+
+    std::shared_ptr<Chain> chain = d->chain.lock();
+
+    if (!chain)
+    {
+        Log::warning("Device") << "Cannot cycle TMS because device isn't assigned to any chain";
+        return;
+    }
+    chain->setCurrentDevice(pointer());
+    chain->cycleMsec(msec);
+}
+
+void Device::cycleUsec(int usec)
+{
+
+    JTAGPP_D(Device);
+
+    std::shared_ptr<Chain> chain = d->chain.lock();
+
+    if (!chain)
+    {
+        Log::warning("Device") << "Cannot cycle TMS because device isn't assigned to any chain";
+        return;
+    }
+    chain->setCurrentDevice(pointer());
+    chain->cycleUsec(usec);
+}
+
+void Device::cycle(int bitlength)
+{
+    JTAGPP_D(Device);
+
+    std::shared_ptr<Chain> chain = d->chain.lock();
+
+    if (!chain)
+    {
+        Log::warning("Device") << "Cannot cycle TMS because device isn't assigned to any chain";
+        return;
+    }
+    chain->setCurrentDevice(pointer());
+    chain->cycle(bitlength);
+
+}
+
+void Device::reset()
+{
+    JTAGPP_D(Device);
+
+    std::shared_ptr<Chain> chain = d->chain.lock();
+
+    if (!chain)
+    {
+        Log::warning("Device") << "Cannot reset device because device isn't assigned to any chain";
+        return;
+    }
+    chain->reset();
+}
 }

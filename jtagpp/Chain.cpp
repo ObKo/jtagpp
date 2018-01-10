@@ -319,4 +319,26 @@ void Chain::ChainPrivate::initChain()
     tap->moveToState(TAPController::S_TEST_LOGIC_RESET);
     q->shiftIR(bp, nullptr);
 }
+
+void Chain::cycleMsec(int msec)
+{
+    JTAGPP_D(Chain);
+
+    long bitcount = ((long)msec * (long)d->interface->frequency() - 1) / 1000L + 1;
+    cycle(bitcount);
+}
+
+void Chain::cycleUsec(int usec)
+{
+    JTAGPP_D(Chain);
+
+    long bitcount = ((long)usec * (long)d->interface->frequency() - 1) / 1000000L + 1;
+    cycle(bitcount);
+}
+
+void Chain::cycle(int bitlength)
+{
+    JTAGPP_D(Chain);
+    d->tap->cycle(bitlength);
+}
 }

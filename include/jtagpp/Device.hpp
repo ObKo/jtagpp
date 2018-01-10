@@ -41,8 +41,12 @@ public:
     std::shared_ptr<Chain> chain() const;
     void setChain(std::shared_ptr<Chain> chain);
 
-    void shiftIR(const uint8_t *in, uint8_t *out);
+    void reset();
+    void shiftIR(const uint8_t *in, uint8_t *out = nullptr);
     void shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first, bool last);
+    void cycleMsec(int msec);
+    void cycleUsec(int usec);
+    void cycle(int bitlength);
     
 protected:
     Device(const IDCode& id);

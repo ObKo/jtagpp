@@ -12,7 +12,7 @@ extern "C" {
 namespace jtagpp
 {
 namespace {
-    static const int TX_CHUNK_SIZE = 512;
+    static const int TX_CHUNK_SIZE = 4096;
 }
 
 class FTDIInterface::FTDIInterfacePrivate: public Interface::InterfacePrivate

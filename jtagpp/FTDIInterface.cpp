@@ -175,6 +175,11 @@ bool FTDIInterface::FTDIInterfacePrivate::open()
         fail("ftdi_set_bitmode()");
         return false;
     }
+    if (ftdi_write_data_set_chunksize(ftdi, TX_CHUNK_SIZE))
+    {
+        fail("ftdi_write_data_set_chunksize()");
+        return false;
+    }
     ftdi_read_data(ftdi, tmp, 5);
 
     uint16_t div = 0;
@@ -226,6 +231,9 @@ bool FTDIInterface::FTDIInterfacePrivate::mpsseCmd(const uint8_t *cmd, int size)
     bool good = true;
     int written = 0;
 
+    if ((mpssePos + size) > TX_CHUNK_SIZE)
+        good = mpsseFlush();
+
     while (good && (written < size))
     {
         int chunkSize = std::min(size, TX_CHUNK_SIZE - mpssePos);
@@ -246,8 +254,6 @@ bool FTDIInterface::FTDIInterfacePrivate::mpsseFlush()
         return true;
 
     int result = ftdiWrite(mpsseBuffer, mpssePos);
-
-    Log::debug("FTDIInterface") << "mpsseFlush(): " << mpssePos << " (" << result << ") bytes ";
 
     if (result != mpssePos)
     {
@@ -551,7 +557,7 @@ int FTDIInterface::shiftTMS(const uint8_t *tms, int bitlength)
     return d->shiftTMS(tms, bitlength);
 }
 
-int FTDIInterface::throttle(int bitlength)
+int FTDIInterface::cycle(int bitlength)
 {
     if (!isOpen())
         return 0;

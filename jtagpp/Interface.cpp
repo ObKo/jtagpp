@@ -63,22 +63,4 @@ int Interface::frequency() const
     JTAGPP_D(const Interface);
     return d->frequency;
 }
-
-void Interface::throttleMsec(int msec)
-{
-    if (!msec)
-        return;
-
-    long bitcount = ((long)msec * (long)frequency() - 1) / 1000L + 1;
-    throttle(bitcount);
-}
-
-void Interface::throttleUsec(int usec)
-{
-    if (!usec)
-        return;
-
-    long bitcount = ((long)usec * (long)frequency() - 1) / 1000000L + 1;
-    throttle(bitcount);
-}
 }

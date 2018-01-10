@@ -182,6 +182,9 @@ bool TAPController::moveToState(TAPController::State newState)
 
     d->walkToState(current, newState, tms, len);
 
+    if (!len)
+        return true;
+
     std::string dbgString(len, '0');
     for (int i = 0; i < len; i++)
     {
@@ -221,9 +224,12 @@ void TAPController::shiftIR(const uint8_t *in, uint8_t *out, int bitlength, bool
     d->interface->shift(in, out, bitlength, last);
 
     if (last)
+    {
         d->state = S_EXIT1_IR;
+        moveToState(S_IDLE);
+    }
 
-    if (in)
+    if (in && (bitlength < 256))
     {
         std::string dbgString(bitlength, '0');
         for (int i = bitlength - 1; i >= 0; i--)
@@ -233,7 +239,7 @@ void TAPController::shiftIR(const uint8_t *in, uint8_t *out, int bitlength, bool
         }
         Log::debug("TAPController") << "IR ->: " << dbgString;
     }
-    if (out)
+    if (out && (bitlength < 256))
     {
         std::string dbgString(bitlength, '0');
         for (int i = bitlength - 1; i >= 0; i--)
@@ -253,11 +259,14 @@ void TAPController::shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool
     d->interface->shift(in, out, bitlength, last);
 
     if (last)
+    {
         d->state = S_EXIT1_DR;
+        moveToState(S_IDLE);
+    }
 
     std::string dbgString(bitlength, '0');
 
-    if (in)
+    if (in && (bitlength < 256))
     {
         for (int i = bitlength - 1; i >= 0; i--)
         {
@@ -266,7 +275,7 @@ void TAPController::shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool
         }
         Log::debug("TAPController") << "DR ->: " << dbgString;
     }
-    if (out)
+    if (out && (bitlength < 256))
     {
         for (int i = bitlength - 1; i >= 0; i--)
         {
@@ -275,5 +284,13 @@ void TAPController::shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool
         }
         Log::debug("TAPController") << "DR <-: " << dbgString;
     }
+}
+
+void TAPController::cycle(int bitlength)
+{
+    JTAGPP_D(TAPController);
+
+    moveToState(S_IDLE);
+    d->interface->cycle(bitlength);
 }
 }

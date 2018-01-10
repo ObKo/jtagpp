@@ -20,7 +20,7 @@ public:
 
     virtual int shift(const uint8_t *tdi, uint8_t *tdo, int bitlength, bool last = false);
     virtual int shiftTMS(const uint8_t *tms, int bitlength);
-    virtual int throttle(int bitlength);
+    virtual int cycle(int bitlength);
     virtual void flush();
 
 protected:

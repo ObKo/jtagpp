@@ -42,6 +42,10 @@ public:
     void shiftIR(const uint8_t *in, uint8_t *out);
     void shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first, bool last);
 
+    void cycleMsec(int msec);
+    void cycleUsec(int usec);
+    void cycle(int bitlength);
+
 protected:
     Chain(std::shared_ptr<Interface> iface);
     Chain(std::shared_ptr<Interface> iface, spimpl::unique_impl_ptr<ChainPrivate>&& p);

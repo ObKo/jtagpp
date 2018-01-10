@@ -34,6 +34,7 @@ public:
 
     void shiftIR(const uint8_t *in, uint8_t *out, int bitlength, bool last);
     void shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool last);
+    void cycle(int bitlength);
 
 protected:
     TAPController(std::shared_ptr<Interface> interface);
