@@ -2,8 +2,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
 PROJECT(jtagpp)
 
-SET(CXX_)
-
 OPTION(STANDALONE_BUILD "Use pre-built libftdi and libusb")
 OPTION(STATIC_BUILD "Create static library (and use static libftdi and libusb in case of standalone build)")
 OPTION(NO_VENDOR_DATABASE "Do not build in JEDEC JEP106 vendor database")

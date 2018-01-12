@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 
     InterfacePtr iface = FTDIInterface::create(config);
 
-    iface->setFrequency(30000000);
+    iface->setFrequency(10000000);
     iface->open();
 
     ChainPtr chain = Chain::create(iface);

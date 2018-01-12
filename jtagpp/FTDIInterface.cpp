@@ -397,7 +397,7 @@ int FTDIInterface::FTDIInterfacePrivate::shift(const uint8_t *tdi, uint8_t *tdo,
     // If last - send last bit and assert TMS
     if (last)
     {
-        uint8_t cmd[2];
+        uint8_t cmd[3];
 
         cmd[0] = MPSSE_WRITE_TMS |
                 ((tdo) ? (MPSSE_DO_READ | MPSSE_READ_NEG) : 0) |
@@ -531,7 +531,7 @@ int FTDIInterface::FTDIInterfacePrivate::throttle(int bitlength)
         }
         cmd[0] = MPSSE_DO_WRITE | MPSSE_LSB | MPSSE_BITMODE | MPSSE_WRITE_NEG;
         cmd[1] = rem - 1;
-        cmd[3] = 0;
+        cmd[2] = 0;
         mpsseCmd(cmd, 3);
     }
     mpsseFlush();
