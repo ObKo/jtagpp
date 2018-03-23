@@ -321,7 +321,7 @@ int FTDIInterface::FTDIInterfacePrivate::shift(const uint8_t *tdi, uint8_t *tdo,
     bool lastbit = false;
 
     if (tdi)
-        lastbit = ((tdi[bitlength / 8 - 1] >> (bitlength % 8)) & 0x1) ? true : false;
+        lastbit = ((tdi[bitlength / 8 - 1] >> ((bitlength - 1) % 8)) & 0x1) ? true : false;
 
     if (last)
         bitlength--;
