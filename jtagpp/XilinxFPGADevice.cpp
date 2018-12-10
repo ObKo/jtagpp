@@ -66,17 +66,6 @@ void XilinxFPGADevice::XilinxFPGADevicePrivate::init()
 
 }
 
-static uint64_t revert64(uint64_t v)
-{
-    uint64_t r = v;
-    int s = 63;
-    for (v >>= 1; s; v >>= 1)
-    {
-        r <<= 1; r |= v & 1; s--;
-    }
-    return r << s;
-}
-
 uint64_t XilinxFPGADevice::readDNA()
 {
     uint64_t dna = 0;
@@ -84,13 +73,13 @@ uint64_t XilinxFPGADevice::readDNA()
     shiftIR(&XILINX_OP_ISC_ENABLE, nullptr);
     cycle(XILINX_TCK_WAIT_CYCLES);
 
-    shiftIR(&XILINX_OP_XSC_DNA, nullptr);
+    shiftIR(&XILINX_OP_FUSE_DNA, nullptr);
     shiftDR(nullptr, (uint8_t*)&dna, 64, true, true);
 
     shiftIR(&XILINX_OP_ISC_DISABLE, nullptr);
     cycle(XILINX_TCK_WAIT_CYCLES);
 
-    return revert64(dna) >> 7;
+    return dna;
 }
 
 void XilinxFPGADevice::startProgram()
