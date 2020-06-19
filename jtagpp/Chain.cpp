@@ -1,23 +1,22 @@
 #include "jtagpp/Chain.hpp"
 #include "jtagpp/private/Chain_p.hpp"
 
-#include "jtagpp/Log.hpp"
-#include "jtagpp/TAPController.hpp"
 #include "jtagpp/Device.hpp"
 #include "jtagpp/Interface.hpp"
+#include "jtagpp/Log.hpp"
+#include "jtagpp/TAPController.hpp"
 
 #include <algorithm>
 #include <cstring>
 
-namespace jtagpp
-{
+namespace jtagpp {
 namespace {
     static const int MAX_JTAG_DEVICES = 64;
     static const int DEFAULT_IR_WIDTH = 6;
 }
 
-Chain::Chain(std::shared_ptr<Interface> iface):
-    _d(spimpl::make_unique_impl<ChainPrivate>())
+Chain::Chain(std::shared_ptr<Interface> iface)
+    : _d(spimpl::make_unique_impl<ChainPrivate>())
 {
     JTAGPP_D(Chain);
     d->q = this;
@@ -26,8 +25,8 @@ Chain::Chain(std::shared_ptr<Interface> iface):
     d->currentDevice = -1;
 }
 
-Chain::Chain(std::shared_ptr<Interface> iface, spimpl::unique_impl_ptr<ChainPrivate>&& p):
-    _d(std::forward<spimpl::unique_impl_ptr<ChainPrivate>>(p))
+Chain::Chain(std::shared_ptr<Interface> iface, spimpl::unique_impl_ptr<ChainPrivate>&& p)
+    : _d(std::forward<spimpl::unique_impl_ptr<ChainPrivate>>(p))
 {
     JTAGPP_D(Chain);
     d->q = this;
@@ -36,18 +35,11 @@ Chain::Chain(std::shared_ptr<Interface> iface, spimpl::unique_impl_ptr<ChainPriv
     d->currentDevice = -1;
 }
 
-Chain::~Chain()
-{
-}
+Chain::~Chain() { }
 
-Chain::ChainPrivate::~ChainPrivate()
-{
-}
+Chain::ChainPrivate::~ChainPrivate() { }
 
-ChainPtr Chain::pointer()
-{
-    return shared_from_this();
-}
+ChainPtr Chain::pointer() { return shared_from_this(); }
 
 ChainPtr Chain::create(std::shared_ptr<Interface> iface)
 {
@@ -85,21 +77,18 @@ std::vector<Device::IDCode> Chain::scan()
     t->shiftDR(zeroes, nullptr, chainTestWidth * 8, false);
     t->shiftDR(ones, onesOut, chainTestWidth * 8, true);
 
-    auto compareBits = [] (const uint8_t *a, uint8_t *b, int length, int loffset) -> bool
-    {
-        for (int i = 0; (i + loffset) < length; i++)
-        {
-            if (((a[i / 8] >> (i % 8)) & 0x1) != ((b[(i + loffset) / 8] >> ((i + loffset) % 8)) & 0x1))
+    auto compareBits = [](const uint8_t* a, uint8_t* b, int length, int loffset) -> bool {
+        for (int i = 0; (i + loffset) < length; i++) {
+            if (((a[i / 8] >> (i % 8)) & 0x1)
+                != ((b[(i + loffset) / 8] >> ((i + loffset) % 8)) & 0x1))
                 return false;
         }
         return true;
     };
 
     int length = 0;
-    for (int i = 0; i < chainTestWidth * 8; i++)
-    {
-        if (compareBits(ones, onesOut, chainTestWidth * 8, i))
-        {
+    for (int i = 0; i < chainTestWidth * 8; i++) {
+        if (compareBits(ones, onesOut, chainTestWidth * 8, i)) {
             length = i;
             break;
         }
@@ -143,8 +132,7 @@ void Chain::removeDevice(DevicePtr device)
 
     auto it = std::find(d->devices.begin(), d->devices.end(), device);
 
-    if (it == d->devices.end())
-    {
+    if (it == d->devices.end()) {
         Log::warning("Chain") << "removeDevice(): device isn't in chain";
         return;
     }
@@ -187,8 +175,7 @@ void Chain::setCurrentDevice(DevicePtr device)
 {
     JTAGPP_D(Chain);
 
-    if (!device)
-    {
+    if (!device) {
         d->currentDevice = -1;
         d->initChain();
         return;
@@ -199,8 +186,7 @@ void Chain::setCurrentDevice(DevicePtr device)
 
     auto it = std::find(d->devices.begin(), d->devices.end(), device);
 
-    if (it == d->devices.end())
-    {
+    if (it == d->devices.end()) {
         Log::warning("Chain") << "setCurrentDevice(): device isn't in chain";
         return;
     }
@@ -209,7 +195,7 @@ void Chain::setCurrentDevice(DevicePtr device)
     d->initChain();
 }
 
-void Chain::shiftIR(const uint8_t *in, uint8_t *out)
+void Chain::shiftIR(const uint8_t* in, uint8_t* out)
 {
     JTAGPP_D(Chain);
 
@@ -229,14 +215,10 @@ void Chain::shiftIR(const uint8_t *in, uint8_t *out)
     // ... except current
     int bitp = 0;
 
-    if (in)
-    {
-        for (int i = d->devices.size() - 1; i >= 0 ; i--)
-        {
-            if (i == d->currentDevice)
-            {
-                for (int j = 0; j < d->devices[i]->irLength(); j++)
-                {
+    if (in) {
+        for (int i = d->devices.size() - 1; i >= 0; i--) {
+            if (i == d->currentDevice) {
+                for (int j = 0; j < d->devices[i]->irLength(); j++) {
                     int outp = bitp + j;
 
                     irIn[outp / 8] &= ~(1 << (outp % 8));
@@ -250,15 +232,11 @@ void Chain::shiftIR(const uint8_t *in, uint8_t *out)
 
     d->tap->shiftIR(irIn, irOut, totalIRLength, true);
 
-    if (out)
-    {
+    if (out) {
         bitp = 0;
-        for (int i = d->devices.size() - 1; i >= 0 ; i--)
-        {
-            if (i == d->currentDevice)
-            {
-                for (int j = 0; j < d->devices[i]->irLength(); j++)
-                {
+        for (int i = d->devices.size() - 1; i >= 0; i--) {
+            if (i == d->currentDevice) {
+                for (int j = 0; j < d->devices[i]->irLength(); j++) {
                     int inp = bitp + j;
 
                     out[j / 8] &= ~(1 << (j % 8));
@@ -271,14 +249,13 @@ void Chain::shiftIR(const uint8_t *in, uint8_t *out)
     }
 }
 
-void Chain::shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first, bool last)
+void Chain::shiftDR(const uint8_t* in, uint8_t* out, int bitlength, bool first, bool last)
 {
     JTAGPP_D(Chain);
 
     int preBypassLength = 0, postBypassLength = 0;
 
-    if (d->currentDevice >= 0)
-    {
+    if (d->currentDevice >= 0) {
         preBypassLength = first ? (d->devices.size() - 1 - d->currentDevice) : 0;
         postBypassLength = last ? d->currentDevice : 0;
     }

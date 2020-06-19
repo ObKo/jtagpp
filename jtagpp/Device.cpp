@@ -1,49 +1,34 @@
 #include "jtagpp/Device.hpp"
 #include "jtagpp/private/Device_p.hpp"
 
-#include "jtagpp/DeviceDB.hpp"
 #include "jtagpp/Chain.hpp"
+#include "jtagpp/DeviceDB.hpp"
 #include "jtagpp/Log.hpp"
 
-namespace jtagpp
-{
-Device::Device(const IDCode& id):
-    _d(spimpl::make_unique_impl<DevicePrivate>())
-{
-    JTAGPP_D(Device);
-    d->id = id;
-}
-
-Device::Device(const IDCode& id, spimpl::unique_impl_ptr<DevicePrivate>&& p):
-    _d(std::forward<spimpl::unique_impl_ptr<DevicePrivate>>(p))
+namespace jtagpp {
+Device::Device(const IDCode& id)
+    : _d(spimpl::make_unique_impl<DevicePrivate>())
 {
     JTAGPP_D(Device);
     d->id = id;
 }
 
-Device::~Device()
+Device::Device(const IDCode& id, spimpl::unique_impl_ptr<DevicePrivate>&& p)
+    : _d(std::forward<spimpl::unique_impl_ptr<DevicePrivate>>(p))
 {
+    JTAGPP_D(Device);
+    d->id = id;
 }
 
-Device::DevicePrivate::~DevicePrivate()
-{
-}
+Device::~Device() { }
 
-DevicePtr Device::pointer()
-{
-    return shared_from_this();
-}
+Device::DevicePrivate::~DevicePrivate() { }
 
-DevicePtr Device::create(const IDCode& id)
-{
-    return std::shared_ptr<Device>(new Device(id));
-}
+DevicePtr Device::pointer() { return shared_from_this(); }
 
-int Device::irLength() const
-{
-    return 6;
-}
+DevicePtr Device::create(const IDCode& id) { return std::shared_ptr<Device>(new Device(id)); }
 
+int Device::irLength() const { return 6; }
 
 Device::IDCode::IDCode()
 {
@@ -61,11 +46,11 @@ Device::IDCode::IDCode(uint32_t jtag)
 
 uint32_t Device::IDCode::jtag() const
 {
-    return ((version & 0xF) << 28) | ((partNumber & 0xFFFF) << 12) |
-           ((manufacturer & 0x7FF) << 1) | 1;
+    return ((version & 0xF) << 28) | ((partNumber & 0xFFFF) << 12) | ((manufacturer & 0x7FF) << 1)
+        | 1;
 }
 
-std::ostream& operator <<(std::ostream& s, const Device::IDCode& code)
+std::ostream& operator<<(std::ostream& s, const Device::IDCode& code)
 {
     std::string vendor = DeviceDB::vendorName(code.manufacturer);
 
@@ -88,14 +73,13 @@ void Device::setChain(std::shared_ptr<Chain> chain)
     d->chain = chain;
 }
 
-void Device::shiftIR(const uint8_t *in, uint8_t *out)
+void Device::shiftIR(const uint8_t* in, uint8_t* out)
 {
     JTAGPP_D(Device);
 
     std::shared_ptr<Chain> chain = d->chain.lock();
 
-    if (!chain)
-    {
+    if (!chain) {
         Log::warning("Device") << "Cannot shift IR because device isn't assigned to any chain";
         return;
     }
@@ -103,14 +87,13 @@ void Device::shiftIR(const uint8_t *in, uint8_t *out)
     chain->shiftIR(in, out);
 }
 
-void Device::shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first, bool last)
+void Device::shiftDR(const uint8_t* in, uint8_t* out, int bitlength, bool first, bool last)
 {
     JTAGPP_D(Device);
 
     std::shared_ptr<Chain> chain = d->chain.lock();
 
-    if (!chain)
-    {
+    if (!chain) {
         Log::warning("Device") << "Cannot shift DR because device isn't assigned to any chain";
         return;
     }
@@ -124,8 +107,7 @@ void Device::cycleMsec(int msec)
 
     std::shared_ptr<Chain> chain = d->chain.lock();
 
-    if (!chain)
-    {
+    if (!chain) {
         Log::warning("Device") << "Cannot cycle TMS because device isn't assigned to any chain";
         return;
     }
@@ -140,8 +122,7 @@ void Device::cycleUsec(int usec)
 
     std::shared_ptr<Chain> chain = d->chain.lock();
 
-    if (!chain)
-    {
+    if (!chain) {
         Log::warning("Device") << "Cannot cycle TMS because device isn't assigned to any chain";
         return;
     }
@@ -155,14 +136,12 @@ void Device::cycle(int bitlength)
 
     std::shared_ptr<Chain> chain = d->chain.lock();
 
-    if (!chain)
-    {
+    if (!chain) {
         Log::warning("Device") << "Cannot cycle TMS because device isn't assigned to any chain";
         return;
     }
     chain->setCurrentDevice(pointer());
     chain->cycle(bitlength);
-
 }
 
 void Device::reset()
@@ -171,8 +150,7 @@ void Device::reset()
 
     std::shared_ptr<Chain> chain = d->chain.lock();
 
-    if (!chain)
-    {
+    if (!chain) {
         Log::warning("Device") << "Cannot reset device because device isn't assigned to any chain";
         return;
     }

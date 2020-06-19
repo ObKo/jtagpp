@@ -15,6 +15,7 @@ public:
     void init();
 
     bool firstProgram;
+    Family family;
 };
 }
 

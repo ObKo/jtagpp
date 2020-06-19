@@ -3,10 +3,8 @@
 
 #include <jtagpp/Interface.hpp>
 
-namespace jtagpp
-{
-class FTDIInterface: public Interface
-{
+namespace jtagpp {
+class FTDIInterface : public Interface {
     JTAGPP_CLASS_NOCOPY(FTDIInterface)
 
 public:
@@ -18,8 +16,8 @@ public:
     virtual bool isOpen() const;
     virtual void close();
 
-    virtual int shift(const uint8_t *tdi, uint8_t *tdo, int bitlength, bool last = false);
-    virtual int shiftTMS(const uint8_t *tms, int bitlength);
+    virtual int shift(const uint8_t* tdi, uint8_t* tdo, int bitlength, bool last = false);
+    virtual int shiftTMS(const uint8_t* tms, int bitlength);
     virtual int cycle(int bitlength);
     virtual void flush();
 

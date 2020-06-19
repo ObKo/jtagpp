@@ -1,22 +1,24 @@
 #include <jtagpp/Log.hpp>
-#include <mutex>
 #include <list>
+#include <mutex>
 #include <sstream>
 
-namespace jtagpp
-{
+namespace jtagpp {
 LogEntry::LogEntry(Level l, const std::string& m, const std::string& t,
-                   const std::chrono::system_clock::time_point& ts):
-    level(l), module(m), text(t), timestamp(ts)
+    const std::chrono::system_clock::time_point& ts)
+    : level(l)
+    , module(m)
+    , text(t)
+    , timestamp(ts)
 {
 }
 
-LogEntry::LogEntry(): level(NONE)
+LogEntry::LogEntry()
+    : level(NONE)
 {
 }
 
-class Log::LogPrivate
-{
+class Log::LogPrivate {
 public:
     std::list<Log::LogHandler> handlers;
     std::mutex handlerMutex;
@@ -28,26 +30,13 @@ Log& Log::instance()
     return log;
 }
 
+Log::Logger Log::debug(const std::string& module) { return Logger(LogEntry::DEBUG, module); }
 
-Log::Logger Log::debug(const std::string& module)
-{
-    return Logger(LogEntry::DEBUG, module);
-}
+Log::Logger Log::info(const std::string& module) { return Logger(LogEntry::INFO, module); }
 
-Log::Logger Log::info(const std::string& module)
-{
-    return Logger(LogEntry::INFO, module);
-}
+Log::Logger Log::warning(const std::string& module) { return Logger(LogEntry::WARNING, module); }
 
-Log::Logger Log::warning(const std::string& module)
-{
-    return Logger(LogEntry::WARNING, module);
-}
-
-Log::Logger Log::error(const std::string& module)
-{
-    return Logger(LogEntry::ERROR, module);
-}
+Log::Logger Log::error(const std::string& module) { return Logger(LogEntry::ERROR, module); }
 
 void Log::writeLog(const LogEntry& entry)
 {
@@ -68,29 +57,28 @@ void Log::addHandler(const LogHandler& handler)
     d->handlerMutex.unlock();
 }
 
-Log::Log():
-    _d(spimpl::make_unique_impl<LogPrivate>())
+Log::Log()
+    : _d(spimpl::make_unique_impl<LogPrivate>())
 {
 }
 
-class Log::Logger::LoggerPrivate
-{
+class Log::Logger::LoggerPrivate {
 public:
     std::string module;
     LogEntry::Level level;
     std::ostringstream stream;
 };
 
-Log::Logger::Logger(LogEntry::Level level, const std::string& module):
-    _d(spimpl::make_unique_impl<LoggerPrivate>())
+Log::Logger::Logger(LogEntry::Level level, const std::string& module)
+    : _d(spimpl::make_unique_impl<LoggerPrivate>())
 {
     JTAGPP_D(Logger);
     d->level = level;
     d->module = module;
 }
 
-Log::Logger::Logger(Logger&& other):
-    _d(std::forward<spimpl::unique_impl_ptr<LoggerPrivate>>(other._d))
+Log::Logger::Logger(Logger&& other)
+    : _d(std::forward<spimpl::unique_impl_ptr<LoggerPrivate>>(other._d))
 {
 }
 

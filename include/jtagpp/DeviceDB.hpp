@@ -3,10 +3,8 @@
 
 #include <jtagpp/jtagpp.hpp>
 
-namespace jtagpp
-{
-class DeviceDB
-{
+namespace jtagpp {
+class DeviceDB {
 public:
     static std::string vendorName(uint16_t jtagID);
 };

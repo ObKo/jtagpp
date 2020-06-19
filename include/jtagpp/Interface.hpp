@@ -6,14 +6,12 @@
 #include <memory>
 #include <string>
 
-namespace jtagpp
-{
+namespace jtagpp {
 class Interface;
 
 typedef std::shared_ptr<Interface> InterfacePtr;
 
-class Interface: public std::enable_shared_from_this<Interface>
-{
+class Interface : public std::enable_shared_from_this<Interface> {
     JTAGPP_BASE_CLASS_NOCOPY(Interface)
 
 public:
@@ -29,8 +27,8 @@ public:
     virtual bool isOpen() const = 0;
     virtual void close() = 0;
 
-    virtual int shift(const uint8_t *tdi, uint8_t *tdo, int bitlength, bool last = false) = 0;
-    virtual int shiftTMS(const uint8_t *tms, int bitlength) = 0;
+    virtual int shift(const uint8_t* tdi, uint8_t* tdo, int bitlength, bool last = false) = 0;
+    virtual int shiftTMS(const uint8_t* tms, int bitlength) = 0;
     virtual int cycle(int bitlength) = 0;
     virtual void flush() = 0;
 

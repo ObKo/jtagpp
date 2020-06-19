@@ -10,35 +10,35 @@
  *   VID:PID:PRODDESC:INTERFACE:DBUS_DATA:DBUS_EN:CBUS_DATA:CBUS_EN
  */
 
-namespace jtagpp
-{
+namespace jtagpp {
 namespace {
-    static const uint16_t       FTDI_DEFAULT_VID            = 0x0403;
-    static const uint16_t       FTDI_DEFAULT_PID            = 0x6010;
-    static const std::string    FTDI_DEFAULT_DESCRIPTION    = std::string();
-    static const uint8_t        FTDI_DEFAULT_INTERFACE      = 0;
-    static const uint8_t        FTDI_DEFAULT_DBUS           = 0x00;
-    static const uint8_t        FTDI_DEFAULT_DBUS_EN        = 0x0b;
-    static const uint8_t        FTDI_DEFAULT_CBUS           = 0x00;
-    static const uint8_t        FTDI_DEFAULT_CBUS_EN        = 0x00;
-    static const int            FTDI_DEFAULT_SPEED          = 1500000;
+    static const uint16_t FTDI_DEFAULT_VID = 0x0403;
+    static const uint16_t FTDI_DEFAULT_PID = 0x6010;
+    static const std::string FTDI_DEFAULT_DESCRIPTION = std::string();
+    static const uint8_t FTDI_DEFAULT_INTERFACE = 0;
+    static const uint8_t FTDI_DEFAULT_DBUS = 0x00;
+    static const uint8_t FTDI_DEFAULT_DBUS_EN = 0x0b;
+    static const uint8_t FTDI_DEFAULT_CBUS = 0x00;
+    static const uint8_t FTDI_DEFAULT_CBUS_EN = 0x00;
+    static const int FTDI_DEFAULT_SPEED = 1500000;
 
-    static const int            FTDI_TIMEOUT_MS             = 100;
+    static const int FTDI_TIMEOUT_MS = 1000;
 }
 
-FTDIInterface::FTDIInterface(const std::string& config):
-    Interface(config, spimpl::unique_impl_ptr<InterfacePrivate>(new FTDIInterfacePrivate(), &spimpl::details::default_delete<InterfacePrivate>))
+FTDIInterface::FTDIInterface(const std::string& config)
+    : Interface(config,
+        spimpl::unique_impl_ptr<InterfacePrivate>(
+            new FTDIInterfacePrivate(), &spimpl::details::default_delete<InterfacePrivate>))
 {
 }
 
-FTDIInterface::FTDIInterface(const std::string& config, spimpl::unique_impl_ptr<InterfacePrivate>&& p):
-    Interface(config, std::forward<spimpl::unique_impl_ptr<InterfacePrivate>>(p))
+FTDIInterface::FTDIInterface(
+    const std::string& config, spimpl::unique_impl_ptr<InterfacePrivate>&& p)
+    : Interface(config, std::forward<spimpl::unique_impl_ptr<InterfacePrivate>>(p))
 {
 }
 
-FTDIInterface::~FTDIInterface()
-{
-}
+FTDIInterface::~FTDIInterface() { }
 
 InterfacePtr FTDIInterface::create(const std::string& config)
 {
@@ -63,25 +63,20 @@ void FTDIInterface::close()
     return d->close();
 }
 
-FTDIInterface::FTDIInterfacePrivate::FTDIInterfacePrivate(): InterfacePrivate(),
-    mpssePos(0)
+FTDIInterface::FTDIInterfacePrivate::FTDIInterfacePrivate()
+    : InterfacePrivate()
+    , mpssePos(0)
 {
 }
 
-FTDIInterface::FTDIInterfacePrivate::~FTDIInterfacePrivate()
-{
-    close();
-}
+FTDIInterface::FTDIInterfacePrivate::~FTDIInterfacePrivate() { close(); }
 
 static int str2int(const std::string& str, int def)
 {
     int res = def;
-    try
-    {
+    try {
         res = std::stoi(str, nullptr, 0);
-    }
-    catch (std::exception & e)
-    {
+    } catch (std::exception& e) {
         res = def;
     }
     return res;
@@ -94,8 +89,7 @@ bool FTDIInterface::FTDIInterfacePrivate::open()
     if (!ftdi)
         return false;
 
-    auto fail = [this] (const std::string& what)
-    {
+    auto fail = [this](const std::string& what) {
         if (ftdi)
             Log::error("FTDIInterface") << what << " failed: " << ftdi_get_error_string(ftdi);
         else
@@ -142,41 +136,34 @@ bool FTDIInterface::FTDIInterfacePrivate::open()
     if ((cfg.size() > 7) && !cfg[7].empty())
         cbusEn = str2int(cfg[7], cbusEn);
 
-    if (ftdi_usb_open_desc(ftdi, vid, pid, desc.empty() ? nullptr : desc.c_str(), nullptr) < 0)
-    {
+    if (ftdi_usb_open_desc(ftdi, vid, pid, desc.empty() ? nullptr : desc.c_str(), nullptr) < 0) {
         fail("FDTI open");
         return false;
     }
 
     uint8_t tmp[5];
 
-    if (ftdi_set_interface(ftdi, (enum ftdi_interface)iface))
-    {
+    if (ftdi_set_interface(ftdi, (enum ftdi_interface)iface)) {
         fail("ftdi_set_interface()");
         return false;
     }
-    if (ftdi_set_bitmode(ftdi, 0x00, BITMODE_RESET))
-    {
+    if (ftdi_set_bitmode(ftdi, 0x00, BITMODE_RESET)) {
         fail("ftdi_set_bitmode()");
         return false;
     }
-    if (ftdi_usb_purge_buffers(ftdi))
-    {
+    if (ftdi_usb_purge_buffers(ftdi)) {
         fail("ftdi_usb_purge_buffers()");
         return false;
     }
-    if (ftdi_set_latency_timer(ftdi, 1))
-    {
+    if (ftdi_set_latency_timer(ftdi, 1)) {
         fail("ftdi_set_latency_timer()");
         return false;
     }
-    if (ftdi_set_bitmode(ftdi, 0xfb, BITMODE_MPSSE))
-    {
+    if (ftdi_set_bitmode(ftdi, 0xfb, BITMODE_MPSSE)) {
         fail("ftdi_set_bitmode()");
         return false;
     }
-    if (ftdi_write_data_set_chunksize(ftdi, TX_CHUNK_SIZE))
-    {
+    if (ftdi_write_data_set_chunksize(ftdi, TX_CHUNK_SIZE)) {
         fail("ftdi_write_data_set_chunksize()");
         return false;
     }
@@ -185,8 +172,7 @@ bool FTDIInterface::FTDIInterfacePrivate::open()
     uint16_t div = 0;
     int baseClockHz;
 
-    switch(ftdi->type)
-    {
+    switch (ftdi->type) {
     case TYPE_2232H:
     case TYPE_4232H:
     case TYPE_232H:
@@ -206,9 +192,8 @@ bool FTDIInterface::FTDIInterfacePrivate::open()
 
     Log::info("FTDIInterface") << "Real TCK frequency: " << frequency / 1000 << " kHz";
 
-    uint8_t setupCMDs[9] = {SET_BITS_LOW,     dbus,       dbusEn,
-                            TCK_DIVISOR,      (uint8_t)(div & 0xFF), (uint8_t)((div >> 8) & 0xFF),
-                            SET_BITS_HIGH,    cbus,       cbusEn};
+    uint8_t setupCMDs[9] = { SET_BITS_LOW, dbus, dbusEn, TCK_DIVISOR, (uint8_t)(div & 0xFF),
+        (uint8_t)((div >> 8) & 0xFF), SET_BITS_HIGH, cbus, cbusEn };
 
     mpsseCmd(setupCMDs, 9);
     mpsseFlush();
@@ -218,15 +203,14 @@ bool FTDIInterface::FTDIInterfacePrivate::open()
 
 void FTDIInterface::FTDIInterfacePrivate::close()
 {
-    if (ftdi)
-    {
+    if (ftdi) {
         ftdi_usb_close(ftdi);
         ftdi_free(ftdi);
         ftdi = nullptr;
     }
 }
 
-bool FTDIInterface::FTDIInterfacePrivate::mpsseCmd(const uint8_t *cmd, int size)
+bool FTDIInterface::FTDIInterfacePrivate::mpsseCmd(const uint8_t* cmd, int size)
 {
     bool good = true;
     int written = 0;
@@ -234,8 +218,7 @@ bool FTDIInterface::FTDIInterfacePrivate::mpsseCmd(const uint8_t *cmd, int size)
     if ((mpssePos + size) > TX_CHUNK_SIZE)
         good = mpsseFlush();
 
-    while (good && (written < size))
-    {
+    while (good && (written < size)) {
         int chunkSize = std::min(size, TX_CHUNK_SIZE - mpssePos);
         std::copy(cmd, cmd + chunkSize, mpsseBuffer + mpssePos);
         mpssePos += chunkSize;
@@ -255,9 +238,9 @@ bool FTDIInterface::FTDIInterfacePrivate::mpsseFlush()
 
     int result = ftdiWrite(mpsseBuffer, mpssePos);
 
-    if (result != mpssePos)
-    {
-        Log::error("FTDIInterface") << "Error writing MPSSE buffer: " << ftdi_get_error_string(ftdi);
+    if (result != mpssePos) {
+        Log::error("FTDIInterface")
+            << "Error writing MPSSE buffer: " << ftdi_get_error_string(ftdi);
         return false;
     }
 
@@ -265,7 +248,7 @@ bool FTDIInterface::FTDIInterfacePrivate::mpsseFlush()
     return true;
 }
 
-bool FTDIInterface::FTDIInterfacePrivate::mpsseResponse(uint8_t *data, int size)
+bool FTDIInterface::FTDIInterfacePrivate::mpsseResponse(uint8_t* data, int size)
 {
     uint8_t buf = SEND_IMMEDIATE;
     mpsseCmd(&buf, 1);
@@ -278,7 +261,7 @@ bool FTDIInterface::FTDIInterfacePrivate::mpsseResponse(uint8_t *data, int size)
         return true;
 }
 
-int FTDIInterface::FTDIInterfacePrivate::ftdiRead(uint8_t *buf, int size)
+int FTDIInterface::FTDIInterfacePrivate::ftdiRead(uint8_t* buf, int size)
 {
     if (!ftdi)
         return -1;
@@ -286,19 +269,17 @@ int FTDIInterface::FTDIInterfacePrivate::ftdiRead(uint8_t *buf, int size)
     auto start = std::chrono::high_resolution_clock::now();
     int written = 0;
 
-    while (written < size)
-    {
+    while (written < size) {
         auto now = std::chrono::high_resolution_clock::now();
-        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count() > FTDI_TIMEOUT_MS)
-        {
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count()
+            > FTDI_TIMEOUT_MS) {
             Log::error("FTDIInterface") << "Read timeout";
             return written;
         }
 
         int res = ftdi_read_data(ftdi, buf + written, size - written);
 
-        if (res < 0)
-        {
+        if (res < 0) {
             Log::error("FTDIInterface") << "Read error";
             return written ? written : res;
         }
@@ -308,7 +289,7 @@ int FTDIInterface::FTDIInterfacePrivate::ftdiRead(uint8_t *buf, int size)
     return written;
 }
 
-int FTDIInterface::FTDIInterfacePrivate::ftdiWrite(uint8_t *buf, int size)
+int FTDIInterface::FTDIInterfacePrivate::ftdiWrite(uint8_t* buf, int size)
 {
     if (!ftdi)
         return -1;
@@ -316,7 +297,8 @@ int FTDIInterface::FTDIInterfacePrivate::ftdiWrite(uint8_t *buf, int size)
     return ftdi_write_data(ftdi, buf, size);
 }
 
-int FTDIInterface::FTDIInterfacePrivate::shift(const uint8_t *tdi, uint8_t *tdo, int bitlength, bool last)
+int FTDIInterface::FTDIInterfacePrivate::shift(
+    const uint8_t* tdi, uint8_t* tdo, int bitlength, bool last)
 {
     bool lastbit = false;
 
@@ -330,39 +312,34 @@ int FTDIInterface::FTDIInterfacePrivate::shift(const uint8_t *tdi, uint8_t *tdo,
     int rem = bitlength % 8;
     int chunkSize = TX_CHUNK_SIZE - 4;
     int chunkCount = bytelength ? ((bytelength - 1) / chunkSize + 1) : 0;
-    const uint8_t *tdip = tdi;
-    uint8_t *tdop = tdo;
+    const uint8_t* tdip = tdi;
+    uint8_t* tdop = tdo;
 
-    auto fail = [&] (const std::string what) -> int
-    {
-         Log::error("FTDIInterface") << what << " failed at bit " << (tdip - tdi) * 8;
-         return (tdip - tdi) * 8;
+    auto fail = [&](const std::string what) -> int {
+        Log::error("FTDIInterface") << what << " failed at bit " << (tdip - tdi) * 8;
+        return (tdip - tdi) * 8;
     };
 
     // Process complete bytes
-    for (int i = 0; i < chunkCount; i++)
-    {
+    for (int i = 0; i < chunkCount; i++) {
         uint8_t cmd[3];
 
         int curSize = (i == chunkCount - 1) ? bytelength % chunkSize : chunkSize;
 
-        cmd[0] = ((tdo) ? (MPSSE_DO_READ | MPSSE_READ_NEG) : 0) |
-                 ((tdi) ? MPSSE_DO_WRITE : 0) |
-                 MPSSE_LSB | MPSSE_WRITE_NEG;
+        cmd[0] = ((tdo) ? (MPSSE_DO_READ | MPSSE_READ_NEG) : 0) | ((tdi) ? MPSSE_DO_WRITE : 0)
+            | MPSSE_LSB | MPSSE_WRITE_NEG;
         cmd[1] = (curSize - 1) & 0xff;
         cmd[2] = ((curSize - 1) >> 8) & 0xff;
 
         if (!mpsseCmd(cmd, 3))
             return fail("MPSSE write");
 
-        if (tdi)
-        {
-            if(!mpsseCmd(tdip, curSize))
+        if (tdi) {
+            if (!mpsseCmd(tdip, curSize))
                 return fail("MPSSE write");
         }
 
-        if (tdo)
-        {
+        if (tdo) {
             if (!mpsseResponse(tdop, curSize))
                 return fail("MPSSE read");
         }
@@ -374,60 +351,48 @@ int FTDIInterface::FTDIInterfacePrivate::shift(const uint8_t *tdi, uint8_t *tdo,
     }
 
     // Process last byte
-    if (rem)
-    {
+    if (rem) {
         uint8_t cmd[2];
 
-        cmd[0] = ((tdo) ? (MPSSE_DO_READ | MPSSE_READ_NEG) : 0) |
-                 ((tdi) ? MPSSE_DO_WRITE : 0) |
-                 MPSSE_LSB | MPSSE_BITMODE | MPSSE_WRITE_NEG;
+        cmd[0] = ((tdo) ? (MPSSE_DO_READ | MPSSE_READ_NEG) : 0) | ((tdi) ? MPSSE_DO_WRITE : 0)
+            | MPSSE_LSB | MPSSE_BITMODE | MPSSE_WRITE_NEG;
         cmd[1] = rem - 1;
 
         if (!mpsseCmd(cmd, 2))
             return fail("MPSSE write");
 
-        if (tdi)
-        {
-            if(!mpsseCmd(tdip, 1))
+        if (tdi) {
+            if (!mpsseCmd(tdip, 1))
                 return fail("MPSSE write");
             tdip++;
         }
     }
 
     // If last - send last bit and assert TMS
-    if (last)
-    {
+    if (last) {
         uint8_t cmd[3];
 
-        cmd[0] = MPSSE_WRITE_TMS |
-                ((tdo) ? (MPSSE_DO_READ | MPSSE_READ_NEG) : 0) |
-                MPSSE_LSB | MPSSE_BITMODE | MPSSE_WRITE_NEG;
+        cmd[0] = MPSSE_WRITE_TMS | ((tdo) ? (MPSSE_DO_READ | MPSSE_READ_NEG) : 0) | MPSSE_LSB
+            | MPSSE_BITMODE | MPSSE_WRITE_NEG;
         cmd[1] = 0;
         cmd[2] = lastbit ? 0x81 : 1;
         mpsseCmd(cmd, 3);
     }
 
     // A bit tangled here because using single read for last two commands
-    if (tdo)
-    {
-        if (last)
-        {
-            uint8_t tmp[2] = {0, 0};
-            if (rem)
-            {
+    if (tdo) {
+        if (last) {
+            uint8_t tmp[2] = { 0, 0 };
+            if (rem) {
                 if (!mpsseResponse(tmp, 2))
                     fail("MPSSE read");
-            }
-            else
-            {
+            } else {
                 if (!mpsseResponse(tmp + 1, 1))
                     fail("MPSSE read");
             }
             *tdop = (tmp[0] >> (8 - rem)) | ((tmp[1] & 0x80) >> (7 - rem));
             tdop++;
-        }
-        else if (rem)
-        {
+        } else if (rem) {
             if (!mpsseResponse(tdop, 1))
                 fail("MPSSE read");
             tdop++;
@@ -436,10 +401,9 @@ int FTDIInterface::FTDIInterfacePrivate::shift(const uint8_t *tdi, uint8_t *tdo,
     return bitlength;
 }
 
-int FTDIInterface::FTDIInterfacePrivate::shiftTMS(const uint8_t *tms, int bitlength)
+int FTDIInterface::FTDIInterfacePrivate::shiftTMS(const uint8_t* tms, int bitlength)
 {
-    unsigned char cmd[3] = {MPSSE_WRITE_TMS|MPSSE_LSB|MPSSE_BITMODE|
-                            MPSSE_WRITE_NEG, 0, 0};
+    unsigned char cmd[3] = { MPSSE_WRITE_TMS | MPSSE_LSB | MPSSE_BITMODE | MPSSE_WRITE_NEG, 0, 0 };
 
     int len = bitlength;
 
@@ -448,8 +412,7 @@ int FTDIInterface::FTDIInterfacePrivate::shiftTMS(const uint8_t *tms, int bitlen
 
     int j = 0;
 
-    while (len > 0)
-    {
+    while (len > 0) {
         /* Attention: Bug in FT2232L(D?, H not!).
            With 7 bits TMS shift, static TDO
            value gets set to TMS on last TCK edge*/
@@ -459,14 +422,12 @@ int FTDIInterface::FTDIInterfacePrivate::shiftTMS(const uint8_t *tms, int bitlen
         cmd[1] = bl - 1;
         cmd[2] = 0x80;
 
-        for (int i = 0; i < bl; i++)
-        {
+        for (int i = 0; i < bl; i++) {
             cmd[2] |= (((tms[j / 8] & (1 << (j % 8))) ? 1 : 0) << i);
             j++;
         }
 
-        if (!mpsseCmd(cmd, 3))
-        {
+        if (!mpsseCmd(cmd, 3)) {
             Log::error("FTDIInterface") << "MPSSE TMS write failed at bit " << bitlength - len;
             return bitlength - len;
         }
@@ -480,8 +441,7 @@ int FTDIInterface::FTDIInterfacePrivate::throttle(int bitlength)
 {
     bool hasClockThrottle;
 
-    switch(ftdi->type)
-    {
+    switch (ftdi->type) {
     case TYPE_2232H:
     case TYPE_4232H:
     case TYPE_232H:
@@ -494,36 +454,31 @@ int FTDIInterface::FTDIInterfacePrivate::throttle(int bitlength)
 
     int bytelength = bitlength / 8;
     int rem = bitlength % 8;
-    int chunkSize = TX_CHUNK_SIZE - 4;
+    int chunkSize = hasClockThrottle ? 65536 : (TX_CHUNK_SIZE - 4);
     int chunkCount = bytelength ? ((bytelength - 1) / chunkSize + 1) : 0;
 
-    if (hasClockThrottle)
-    {
-        unsigned char cmd[3] = {0x8f};
+    if (hasClockThrottle) {
+        unsigned char cmd[3] = { 0x8f };
 
-        for (int i = 0; i < chunkCount; i++)
-        {
-            int curSize = (i == (chunkCount - 1)) ? (bytelength % chunkSize) : chunkSize;
+        for (int i = 0; i < chunkCount; i++) {
+            int curSize = ((i == (chunkCount - 1)) ? (bytelength % chunkSize) : chunkSize) - 1;
             cmd[1] = curSize & 0xff;
-            cmd[2] = (curSize >> 8 ) & 0xff;
+            cmd[2] = (curSize >> 8) & 0xff;
             mpsseCmd(cmd, 3);
         }
         cmd[0] = 0x8e;
-        cmd[1] = rem - 1;
+        cmd[1] = rem ? rem - 1 : 0;
         mpsseCmd(cmd, 2);
-    }
-    else
-    {
+    } else {
         unsigned char cmd[3];
 
-        for (int i = 0; i < chunkCount; i++)
-        {
+        for (int i = 0; i < chunkCount; i++) {
             uint8_t dummy = 0;
             int curSize = (i == (chunkCount - 1)) ? (bytelength % chunkSize) : chunkSize;
 
             cmd[0] = MPSSE_DO_WRITE | MPSSE_LSB | MPSSE_WRITE_NEG;
             cmd[1] = curSize & 0xff;
-            cmd[2] = (curSize >> 8 ) & 0xff;
+            cmd[2] = (curSize >> 8) & 0xff;
 
             mpsseCmd(cmd, 3);
             for (int j = 0; j < curSize; j++)
@@ -539,7 +494,7 @@ int FTDIInterface::FTDIInterfacePrivate::throttle(int bitlength)
     return bitlength;
 }
 
-int FTDIInterface::shift(const uint8_t *tdi, uint8_t *tdo, int bitlength, bool last)
+int FTDIInterface::shift(const uint8_t* tdi, uint8_t* tdo, int bitlength, bool last)
 {
     if (!isOpen())
         return 0;
@@ -548,7 +503,7 @@ int FTDIInterface::shift(const uint8_t *tdi, uint8_t *tdo, int bitlength, bool l
     return d->shift(tdi, tdo, bitlength, last);
 }
 
-int FTDIInterface::shiftTMS(const uint8_t *tms, int bitlength)
+int FTDIInterface::shiftTMS(const uint8_t* tms, int bitlength)
 {
     if (!isOpen())
         return 0;

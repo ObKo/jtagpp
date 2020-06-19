@@ -1,30 +1,27 @@
 #ifndef JTAGPP_LOG_H
 #define JTAGPP_LOG_H
 
-#include <jtagpp/jtagpp.hpp>
 #include <chrono>
 #include <functional>
 #include <iostream>
+#include <jtagpp/jtagpp.hpp>
 
-namespace jtagpp
-{
+namespace jtagpp {
 
-struct LogEntry
-{
-    enum Level {NONE, DEBUG, VERBOSE, INFO, WARNING, ERROR};
+struct LogEntry {
+    enum Level { NONE, DEBUG, VERBOSE, INFO, WARNING, ERROR };
 
     LogEntry(Level level, const std::string& module, const std::string& text,
-             const std::chrono::system_clock::time_point& timestamp = std::chrono::system_clock::now());
+        const std::chrono::system_clock::time_point& timestamp = std::chrono::system_clock::now());
     LogEntry();
-    
+
     Level level;
     std::string module;
     std::string text;
     std::chrono::system_clock::time_point timestamp;
 };
 
-class Log
-{
+class Log {
     JTAGPP_BASE_CLASS_NOCOPY(Log)
 
 public:
@@ -45,8 +42,7 @@ private:
     Log();
 };
 
-class Log::Logger
-{
+class Log::Logger {
     JTAGPP_BASE_CLASS_NOCOPY(Logger)
 
 public:
@@ -56,10 +52,9 @@ public:
 
     std::ostream& stream();
 
-    Logger& operator <<(LogEntry::Level l);
+    Logger& operator<<(LogEntry::Level l);
 
-    template <class D>
-    Logger& operator <<(D v)
+    template <class D> Logger& operator<<(D v)
     {
         stream() << v;
         return *this;

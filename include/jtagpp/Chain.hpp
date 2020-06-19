@@ -1,22 +1,20 @@
 #ifndef JTAGPP_CHAIN_H
 #define JTAGPP_CHAIN_H
 
-#include <jtagpp/jtagpp.hpp>
 #include <jtagpp/Device.hpp>
+#include <jtagpp/jtagpp.hpp>
 
 #include <memory>
 #include <vector>
 
-namespace jtagpp
-{
+namespace jtagpp {
 class Interface;
 class TAPController;
 class Chain;
 
 typedef std::shared_ptr<Chain> ChainPtr;
 
-class Chain: public std::enable_shared_from_this<Chain>
-{
+class Chain : public std::enable_shared_from_this<Chain> {
     JTAGPP_BASE_CLASS_NOCOPY(Chain)
 
 public:
@@ -39,8 +37,8 @@ public:
     void setCurrentDevice(DevicePtr device);
 
     void reset();
-    void shiftIR(const uint8_t *in, uint8_t *out);
-    void shiftDR(const uint8_t *in, uint8_t *out, int bitlength, bool first, bool last);
+    void shiftIR(const uint8_t* in, uint8_t* out);
+    void shiftDR(const uint8_t* in, uint8_t* out, int bitlength, bool first, bool last);
 
     void cycleMsec(int msec);
     void cycleUsec(int usec);
