@@ -1,6 +1,7 @@
 #include "jtagpp/DeviceDB.hpp"
 
 #include <map>
+#include <string>
 
 namespace jtagpp {
 #ifndef NO_VENDOR_DATABASE

@@ -68,9 +68,9 @@ void XilinxFPGADevice::XilinxFPGADevicePrivate::init()
     }
 }
 
-__uint128_t XilinxFPGADevice::readDNA()
+XilinxFPGADevice::DNA XilinxFPGADevice::readDNA()
 {
-    __uint128_t dna = 0;
+    DNA dna = {0, 0};
 
     // shiftIR(&XILINX_OP_ISC_ENABLE, nullptr);
     // cycle(XILINX_TCK_WAIT_CYCLES);

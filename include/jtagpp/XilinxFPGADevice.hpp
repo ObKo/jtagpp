@@ -9,12 +9,16 @@ class XilinxFPGADevice : public Device {
 
 public:
     enum Family { FAMILY_UNKNOWN, FAMILY_7SERIES, FAMILY_ULTRASCALE };
+    struct DNA {
+        uint64_t low;
+        uint32_t high;
+    };
 
     virtual ~XilinxFPGADevice();
 
     static DevicePtr create(const IDCode& id);
 
-    __uint128_t readDNA();
+    DNA readDNA();
 
     Family family() const;
 
