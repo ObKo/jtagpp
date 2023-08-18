@@ -4,16 +4,13 @@
 #include <jtagpp/TAPController.hpp>
 #include <vector>
 
-namespace jtagpp
-{
-class TAPController::TAPControllerPrivate
-{
+namespace jtagpp {
+class TAPController::TAPControllerPrivate {
 public:
     virtual ~TAPControllerPrivate();
 
-    void walkToState(TAPController::State& current,
-                     const TAPController::State& target,
-                     uint32_t& tms, int& tmsLength);
+    void walkToState(TAPController::State& current, const TAPController::State& target,
+        uint32_t& tms, int& tmsLength);
 
     State state;
     std::shared_ptr<Interface> interface;

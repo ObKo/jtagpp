@@ -136,7 +136,8 @@ bool FTDIInterface::FTDIInterfacePrivate::open()
     if ((cfg.size() > 7) && !cfg[7].empty())
         cbusEn = str2int(cfg[7], cbusEn);
 
-    if (ftdi_usb_open_desc_index(ftdi, vid, pid, desc.empty() ? nullptr : desc.c_str(), nullptr, 0) < 0) {
+    if (ftdi_usb_open_desc_index(ftdi, vid, pid, desc.empty() ? nullptr : desc.c_str(), nullptr, 0)
+        < 0) {
         fail("FDTI open");
         return false;
     }

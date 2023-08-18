@@ -3,14 +3,12 @@
 
 #include <jtagpp/Chain.hpp>
 
-namespace jtagpp
-{
-class Chain::ChainPrivate
-{
+namespace jtagpp {
+class Chain::ChainPrivate {
 public:
     virtual ~ChainPrivate();
 
-    Chain *q;
+    Chain* q;
 
     std::shared_ptr<TAPController> tap;
     std::shared_ptr<Interface> interface;

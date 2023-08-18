@@ -66,8 +66,7 @@ namespace spimpl {
         template <class T, class D, class C>
         struct is_default_manageable : public std::integral_constant<bool,
                                            std::is_same<D, default_deleter_t<T>>::value
-                                               && std::is_same<C, default_copier_t<T>>::value> {
-        };
+                                               && std::is_same<C, default_copier_t<T>>::value> { };
     }
 
     template <class T, class Deleter = details::default_deleter_t<T>,

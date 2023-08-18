@@ -3,10 +3,8 @@
 
 #include <jtagpp/Device.hpp>
 
-namespace jtagpp
-{
-class Device::DevicePrivate
-{
+namespace jtagpp {
+class Device::DevicePrivate {
 public:
     virtual ~DevicePrivate();
 

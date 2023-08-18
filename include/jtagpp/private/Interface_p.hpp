@@ -4,10 +4,8 @@
 #include <jtagpp/Interface.hpp>
 #include <vector>
 
-namespace jtagpp
-{
-class Interface::InterfacePrivate
-{
+namespace jtagpp {
+class Interface::InterfacePrivate {
 public:
     virtual ~InterfacePrivate();
 

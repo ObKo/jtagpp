@@ -6,6 +6,7 @@ namespace {
     static const uint16_t XILINX_ID = 0x049;
     static const uint16_t XILINX_7SERIES_ID = 0x1B;
     static const uint16_t XILINX_ULTRASCALE_ID = 0x1C;
+    static const uint16_t XILINX_ULTRASCALE_P_ID = 0x25;
 
     static const uint8_t XILINX_OP_BYPASS = 0xFF;
     static const uint8_t XILINX_OP_ISC_ENABLE = 0x10;
@@ -61,16 +62,19 @@ void XilinxFPGADevice::XilinxFPGADevicePrivate::init()
     } else if (((id.partNumber >> 9) & 0x7F) == XILINX_ULTRASCALE_ID) {
         family = FAMILY_ULTRASCALE;
         supported = true;
+    } else if (((id.partNumber >> 9) & 0x7F) == XILINX_ULTRASCALE_P_ID) {
+        family = FAMILY_ULTRASCALE_P;
+        supported = true;
     } else {
         Log::error("XilinxFPGADevice")
             << "Invalid Xilinx part 0x" << std::hex << ((id.partNumber >> 9) & 0x7F)
-            << ", only 7 series and UltraScale FPGA supported";
+            << ", only some 7 series and UltraScale(+) FPGA supported";
     }
 }
 
 XilinxFPGADevice::DNA XilinxFPGADevice::readDNA()
 {
-    DNA dna = {0, 0};
+    DNA dna = { 0, 0 };
 
     // shiftIR(&XILINX_OP_ISC_ENABLE, nullptr);
     // cycle(XILINX_TCK_WAIT_CYCLES);
@@ -101,7 +105,7 @@ void XilinxFPGADevice::startProgram()
     }
 
     shiftIR(&XILINX_OP_CFG_IN);
-    if (d->family == FAMILY_ULTRASCALE)
+    if ((d->family == FAMILY_ULTRASCALE) || (d->family == FAMILY_ULTRASCALE_P))
         cycleMsec(XILINX_US_CFG_IN_WAIT_MS);
 
     d->firstProgram = true;

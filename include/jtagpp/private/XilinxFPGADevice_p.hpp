@@ -5,10 +5,8 @@
 
 #include <jtagpp/XilinxFPGADevice.hpp>
 
-namespace jtagpp
-{
-class XilinxFPGADevice::XilinxFPGADevicePrivate: public Device::DevicePrivate
-{
+namespace jtagpp {
+class XilinxFPGADevice::XilinxFPGADevicePrivate : public Device::DevicePrivate {
 public:
     virtual ~XilinxFPGADevicePrivate();
 

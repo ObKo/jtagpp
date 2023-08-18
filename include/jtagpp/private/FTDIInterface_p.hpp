@@ -9,14 +9,12 @@ extern "C" {
 #include <ftdi.h>
 }
 
-namespace jtagpp
-{
+namespace jtagpp {
 namespace {
     static const int TX_CHUNK_SIZE = 4096;
 }
 
-class FTDIInterface::FTDIInterfacePrivate: public Interface::InterfacePrivate
-{
+class FTDIInterface::FTDIInterfacePrivate : public Interface::InterfacePrivate {
 public:
     FTDIInterfacePrivate();
     virtual ~FTDIInterfacePrivate();
@@ -24,18 +22,18 @@ public:
     bool open();
     void close();
 
-    bool mpsseCmd(const uint8_t *cmd, int size);
+    bool mpsseCmd(const uint8_t* cmd, int size);
     bool mpsseFlush();
-    bool mpsseResponse(uint8_t *data, int size);
+    bool mpsseResponse(uint8_t* data, int size);
 
-    int ftdiRead(uint8_t *buf, int size);
-    int ftdiWrite(uint8_t *buf, int size);
+    int ftdiRead(uint8_t* buf, int size);
+    int ftdiWrite(uint8_t* buf, int size);
 
-    int shift(const uint8_t *tdi, uint8_t *tdo, int bitlength, bool last);
-    int shiftTMS(const uint8_t *tms, int bitlength);
+    int shift(const uint8_t* tdi, uint8_t* tdo, int bitlength, bool last);
+    int shiftTMS(const uint8_t* tms, int bitlength);
     int throttle(int bitlength);
 
-    struct ftdi_context *ftdi;
+    struct ftdi_context* ftdi;
 
     uint8_t mpsseBuffer[TX_CHUNK_SIZE];
     int mpssePos;

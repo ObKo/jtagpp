@@ -8,7 +8,7 @@ class XilinxFPGADevice : public Device {
     JTAGPP_CLASS_NOCOPY(XilinxFPGADevice)
 
 public:
-    enum Family { FAMILY_UNKNOWN, FAMILY_7SERIES, FAMILY_ULTRASCALE };
+    enum Family { FAMILY_UNKNOWN, FAMILY_7SERIES, FAMILY_ULTRASCALE, FAMILY_ULTRASCALE_P };
     struct DNA {
         uint64_t low;
         uint32_t high;
