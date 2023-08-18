@@ -1,4 +1,4 @@
-SET(JTAGPP_HEADERS
+set(JTAGPP_HEADERS
     ../include/jtagpp/FTDIInterface.hpp
     ../include/jtagpp/Interface.hpp
     ../include/jtagpp/TAPController.hpp
@@ -11,7 +11,7 @@ SET(JTAGPP_HEADERS
     ../include/jtagpp/spimpl.hpp
 )
 
-SET(JTAGPP_PRIVATE_HEADERS
+set(JTAGPP_PRIVATE_HEADERS
     ../include/jtagpp/private/FTDIInterface_p.hpp
     ../include/jtagpp/private/Interface_p.hpp
     ../include/jtagpp/private/TAPController_p.hpp
@@ -20,7 +20,7 @@ SET(JTAGPP_PRIVATE_HEADERS
     ../include/jtagpp/private/XilinxFPGADevice_p.hpp
 )
 
-SET(JTAGPP_SOURCES 
+set(JTAGPP_SOURCES 
     FTDIInterface.cpp
     Interface.cpp
     TAPController.cpp
@@ -31,10 +31,22 @@ SET(JTAGPP_SOURCES
     XilinxFPGADevice.cpp
 )
 
-ADD_LIBRARY(jtagpp ${JTAGPP_SOURCES} ${JTAGPP_HEADERS} ${JTAGPP_PRIVATE_HEADERS})
-TARGET_LINK_LIBRARIES(jtagpp ${LIBFTDI_LIBRARIES})
-SET_PROPERTY(TARGET jtagpp PROPERTY CXX_STANDARD 11)
+add_library(jtagpp SHARED ${JTAGPP_SOURCES} ${JTAGPP_HEADERS} ${JTAGPP_PRIVATE_HEADERS})
+target_include_directories(jtagpp PUBLIC ${LIBFTDI_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../include)
+target_link_libraries(jtagpp PRIVATE ${LIBFTDI_LIBRARIES})
+target_link_directories(jtagpp PRIVATE ${LIBFTDI_LIBRARY_DIRS})
+set_property(TARGET jtagpp PROPERTY CXX_STANDARD 11)
 
-IF(WIN32)
-    TARGET_COMPILE_DEFINITIONS(jtagpp PRIVATE NOGDI)
-ENDIF()
+add_library(jtagpp_static STATIC ${JTAGPP_SOURCES} ${JTAGPP_HEADERS} ${JTAGPP_PRIVATE_HEADERS})
+target_include_directories(jtagpp_static PUBLIC ${LIBFTDI_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../include)
+target_link_libraries(jtagpp_static PRIVATE ${LIBFTDI_LIBRARIES})
+target_link_directories(jtagpp_static PRIVATE ${LIBFTDI_LIBRARY_DIRS})
+set_property(TARGET jtagpp_static PROPERTY CXX_STANDARD 11)
+
+if(WIN32)
+    target_compile_definitions(jtagpp PRIVATE NOGDI ${LIBFTDI_DEFINITIONS})
+    target_compile_definitions(jtagpp_static PRIVATE NOGDI ${LIBFTDI_DEFINITIONS})
+else()
+    target_compile_definitions(jtagpp PRIVATE ${LIBFTDI_DEFINITIONS})
+    target_compile_definitions(jtagpp_static PRIVATE ${LIBFTDI_DEFINITIONS})
+endif()

@@ -1,42 +1,20 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+cmake_minimum_required(VERSION 3.11)
 
-PROJECT(jtagpp)
+project(jtagpp)
 
-OPTION(STANDALONE_BUILD "Use pre-built libftdi and libusb")
-OPTION(STATIC_BUILD "Create static library (and use static libftdi and libusb in case of standalone build)")
-OPTION(NO_VENDOR_DATABASE "Do not build in JEDEC JEP106 vendor database")
+option(JTAGPP_STANDALONE_BUILD "Use pre-built libftdi and libusb")
+option(JTAGPP_NO_VENDOR_DATABASE "Do not build in JEDEC JEP106 vendor database")
 
-IF(STANDALONE_BUILD)
-    SET(LibFTDI1_DIR ${CMAKE_SOURCE_DIR}/3rdparty/cmake)
-    SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/3rdparty/cmake ${CMAKE_MODULE_PATH})
-ENDIF()
+if(JTAGPP_STANDALONE_BUILD)
+    set(LibFTDI1_DIR ${CMAKE_SOURCE_DIR}/3rdparty/cmake)
+    set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/3rdparty/cmake ${CMAKE_MODULE_PATH})
+endif()
 
-IF(STATIC_BUILD)
-    SET(BUILD_SHARED_LIBS OFF)
-    SET(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc -static-libstdc++")
-    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-ELSE()
-    SET(BUILD_SHARED_LIBS ON)
-ENDIF()
+if(JTAGPP_NO_VENDOR_DATABASE)
+    add_definitions(-DNO_VENDOR_DATABASE)
+endif()
 
-IF(NO_VENDOR_DATABASE)
-    ADD_DEFINITIONS(-DNO_VENDOR_DATABASE)
-ENDIF()
+find_package(LibFTDI1 NO_MODULE REQUIRED)
 
-FIND_PACKAGE(LibFTDI1 NO_MODULE REQUIRED)
-
-ADD_DEFINITIONS(
-    ${LIBFTDI_DEFINITIONS}
-)
-
-INCLUDE_DIRECTORIES(
-    ${CMAKE_SOURCE_DIR}/include
-    ${LIBFTDI_INCLUDE_DIRS}
-)
-
-LINK_DIRECTORIES(
-    ${LIBFTDI_LIBRARY_DIRS}
-)
-
-ADD_SUBDIRECTORY(jtagpp)
-ADD_SUBDIRECTORY(tools)
+add_subdirectory(jtagpp)
+add_subdirectory(tools)
